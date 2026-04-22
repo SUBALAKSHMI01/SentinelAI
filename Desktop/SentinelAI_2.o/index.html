@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SentinelAI</title>
+</head>
+<body>
+
+<h2>SentinelAI Demo</h2>
+
+<textarea id="text" rows="5" cols="50" placeholder="Enter text..."></textarea><br><br>
+
+<select id="role">
+    <option value="employee">Employee</option>
+    <option value="admin">Admin</option>
+</select><br><br>
+
+<button onclick="analyze()">Analyze</button>
+
+<h3>Result:</h3>
+<pre id="result"></pre>
+
+<script>
+async function analyze() {
+    const text = document.getElementById("text").value;
+    const role = document.getElementById("role").value;
+
+    const response = await fetch("http://127.0.0.1:8000/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text, role })
+    });
+
+    const data = await response.json();
+    document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html> 
