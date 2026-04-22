@@ -40,10 +40,10 @@ def analyze_prompt(request: PromptRequest):
     # 🔹 Step 3: Send masked to AI
     ai_raw_response = call_external_ai(masked_text)
 
-    # 🔹 Step 4: Restore original data
-    final_response = restore_text(ai_raw_response, mapping)
+    # 🔹 Step 4: Restore based on role
+    final_response = restore_text(ai_raw_response, mapping, role)
 
-    # 🔹 Logging (optional)
+    # 🔹 Logging
     log_event({
         "role": role,
         "original": text,

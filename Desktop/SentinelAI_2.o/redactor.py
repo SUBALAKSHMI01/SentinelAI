@@ -23,7 +23,35 @@ def redact_text(text: str):
     return text, mapping
 
 
-def restore_text(text: str, mapping: dict):
+# 🔥 NEW: Partial masking logic
+def partial_mask(value: str, entity_type: str):
+    if entity_type == "EMAIL":
+        parts = value.split("@")
+        return parts[0][0] + "***@" + parts[1]
+
+    elif entity_type == "PHONE":
+        return value[:2] + "****" + value[-2:]
+
+    return "[MASKED]"
+
+
+# 🔥 UPDATED restore (role-based)
+def restore_text(text: str, mapping: dict, role: str):
     for placeholder, original in mapping.items():
-        text = text.replace(placeholder, original)
+
+        entity_type = placeholder.split("_")[0].replace("[", "")
+
+        # ✅ Admin & Employee → FULL restore
+        if role.lower() in ["admin", "employee"]:
+            replacement = original
+
+        # ✅ External → PARTIAL restore
+        elif role.lower() == "external":
+            replacement = partial_mask(original, entity_type)
+
+        else:
+            replacement = original  # fallback
+
+        text = text.replace(placeholder, replacement)
+
     return text
