@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware 
 
@@ -18,33 +18,31 @@ app.add_middleware(
 
 class PromptRequest(BaseModel):
     text: str
-    role: str
-
-
-# ✅ Simulated AI
-def call_external_ai(prompt):
-    return "AI Response for: " + prompt
+    role: str   # admin / employee
+    user_id: str   # 🔥 important
 
 
 @app.post("/analyze")
 def analyze_prompt(request: PromptRequest):
     text = request.text
-    role = request.role
+    role = request.role.lower()
+    user_id = request.user_id
 
-    # 🔹 Step 1: Detect
+    if role not in ["admin", "employee"]:
+        return {"error": "Invalid role"}
+
+    # 🔍 Detect
     detected = detect_sensitive_data(text)
 
-    # 🔹 Step 2: Mask ALWAYS
-    masked_text, mapping = redact_text(text)
+    # 🔐 Mask
+    masked_text, mapping = redact_text(text, detected)
 
-    # 🔹 Step 3: Send masked to AI
-    ai_raw_response = call_external_ai(masked_text)
+    # 🔄 Restore
+    final_response = restore_text(masked_text, mapping, role)
 
-    # 🔹 Step 4: Restore based on role
-    final_response = restore_text(ai_raw_response, mapping, role)
-
-    # 🔹 Logging
+    # 🧾 Log everything
     log_event({
+        "user_id": user_id,
         "role": role,
         "original": text,
         "masked": masked_text,
@@ -53,14 +51,20 @@ def analyze_prompt(request: PromptRequest):
 
     return {
         "role": role,
+        "user_id": user_id,
         "original": text,
         "detected": detected,
         "masked_text": masked_text,
-        "ai_raw_response": ai_raw_response,
         "final_response": final_response
     }
 
 
+# 🔥 ROLE-BASED LOG ACCESS
 @app.get("/logs")
-def fetch_logs():
-    return get_logs()
+def fetch_logs(role: str = Query(...), user_id: str = Query(None)):
+    return get_logs(role, user_id)
+
+
+@app.get("/")
+def home():
+    return {"message": "SentinelAI with Audit Logs Running"}

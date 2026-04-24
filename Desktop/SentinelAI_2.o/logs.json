@@ -1,0 +1,53 @@
+[
+  {
+    "user_id": "emp1",
+    "role": "employee",
+    "original": "My email is suba@gmail.com and phone is 9876543210",
+    "masked": "My email is [EMAIL_0] and phone is [PHONE_0]",
+    "detected": {
+      "EMAIL": [
+        "suba@gmail.com"
+      ],
+      "PHONE": [
+        "9876543210"
+      ],
+      "ACCOUNT_NUMBER": [
+        "9876543210"
+      ]
+    },
+    "timestamp": "2026-04-24T18:22:10.806698"
+  },
+  {
+    "user_id": "emp2",
+    "role": "employee",
+    "original": "My email is kumar@gmail.com and phone is 9876543210",
+    "masked": "My email is [EMAIL_0] and phone is [PHONE_0]",
+    "detected": {
+      "EMAIL": [
+        "kumar@gmail.com"
+      ],
+      "PHONE": [
+        "9876543210"
+      ],
+      "ACCOUNT_NUMBER": [
+        "9876543210"
+      ]
+    },
+    "timestamp": "2026-04-24T18:22:57.196818"
+  },
+  {
+    "user_id": "emp1",
+    "role": "employee",
+    "original": "i am subalakshmi, i come from panruti and you can contact me at 9442389034 ",
+    "masked": "i am subalakshmi, i come from panruti and you can contact me at [PHONE_0] ",
+    "detected": {
+      "PHONE": [
+        "9442389034"
+      ],
+      "ACCOUNT_NUMBER": [
+        "9442389034"
+      ]
+    },
+    "timestamp": "2026-04-24T18:37:30.084315"
+  }
+]
